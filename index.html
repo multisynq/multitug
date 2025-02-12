@@ -43,6 +43,7 @@
                 height: 3.5em;
                 border: none;
                 border-radius: 1em;
+                font-family: monospace;
             }
             .bubble {
                 position: fixed;
@@ -204,22 +205,16 @@ class TugUI extends Croquet.View {
     updateButton() {
         if (this.model.getPlayerPos(PlayerId) === 0) {
             button.textContent = "Spectating";
-            button.disabled = true;
         } else if (this.model.players.size < 2) {
             button.textContent = "Waiting for other player";
-            button.disabled = true;
         } else if (this.model.timer === -TIMEOUT) {
             button.textContent = "Start";
-            button.disabled = false;
         } else if (this.model.timer <= 0) {
             button.textContent = `GG! (${TIMEOUT + this.model.timer})`;
-            button.disabled = true;
         } else if (this.model.timer > GAMETIME) {
             button.textContent = `Ready (${this.model.timer - GAMETIME})`;
-            button.disabled = true;
         } else {
             button.textContent = "Tug";
-            button.disabled = false;
         }
     }
 
