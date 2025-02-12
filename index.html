@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+        <title>MultiTug</title>
+        <style>
+            html, body {
+                height: 100%;
+                overflow: hidden;
+                touch-action: none;
+                -webkit-touch-callout: none;
+                -webkit-user-select: none;
+                user-select: none;
+                touch-action: none;
+                background: #000;
+                color: #69F;
+                font-family: monospace;
+            }
+            body {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                text-align: center;
+                font-size: 2em;
+            }
+            #players {
+                height: 4em;
+                margin-bottom: 1em;
+            }
+            #score {
+                font-size: 2em;
+            }
+            #timer {
+                font-size: 2em;
+            }
+            #button {
+                margin-top: 1em;
+                padding: .5em 1em;
+                font-size: 1em;
+                cursor: pointer;
+                height: 3.5em;
+                border: none;
+                border-radius: 1em;
+            }
+            .bubble {
+                position: fixed;
+                padding: .5em;
+                transform: translate(-50%, -50%);
+                transition: top 1s, left 1s, right 1s, opacity 1s;
+                border: 2px solid;
+                border-radius: 2em;
+            }
+            #button,.bubble {
+                background: #69F;
+                color: #000;
+                border-color: #000;
+            }
+            #icon {
+                width: 1em;
+                height: 1em;
+                background: url('data:image/png;base64,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');
+                background-size: contain;
+                display: inline-block;
+                vertical-align: middle;
+            }
+            #codelink {
+                position: fixed; bottom: 10px; right: 10px; padding: .5em; border-radius: 30px;
+                opacity: 50%; background: lightgray; box-shadow: 1px 1px 5px black;
+                text-decoration: none; font-family: monospace; font-size: 1em;
+            }
+            #codelink:hover, #initials:hover {
+                opacity: 100%;
+            }
+            @media (prefers-color-scheme: light) {
+                body { background: #EEF; color: #00F; }
+                #button,.bubble { background: #00F; color: #EEF; border-color: #EEF; }
+                #codelink { background: #FFF; color: #00F; }
+            }
+        </style>
+        <script src="https://cdn.jsdelivr.net/npm/@croquet/croquet@2.0.0-42"></script>
+    </head>
+    <body>
+        <h1><div id="icon"></div> MultiTug</h1>
+        <div id="players">...</div>
+        <div id="score"></div>
+        <div id="timer">-:--</div>
+        <button id="button">Waiting</button>
+
+        <a id="codelink" href="https://github.com/multisynq/multitug/blob/main/index.html"
+            title="View source code on GitHub" target="_blank">{}</a>
+
+<script>
+
+/////////// Model code is executed inside of synced VM ///////////
+
+const GAMETIME  = 10; // seconds per round
+const COUNTDOWN =  3; // seconds to wait before game starts
+const TIMEOUT   =  5; // seconds to wait after game ends
+
+class TugGame extends Croquet.Model {
+    init(_) {
+        this.counter = 0;
+        this.timer = -TIMEOUT;
+        this.players = new Map();
+        this.subscribe(this.sessionId, "view-join", this.onPlayerJoin);
+        this.subscribe(this.sessionId, "view-exit", this.onPlayerExit);
+        this.subscribe("button", "click", this.onButtonClicked);
+    }
+
+    onPlayerJoin({ viewData: { playerId }}) {
+        const views = this.players.get(playerId) || 0;
+        this.players.set(playerId, views + 1);
+        this.publish("players", "changed");
+    }
+
+    onPlayerExit({ viewData: { playerId }}) {
+        const views = this.players.get(playerId) - 1;
+        if (views > 0) {
+            this.players.set(playerId, views);
+        } else {
+            if (this.getPlayerPos(playerId) && this.counter) {
+                this.counter = 0;
+                this.publish("score", "changed");
+                this.timer = -TIMEOUT;
+                this.cancelFuture(this.tick);
+                this.publish("timer", "changed");
+            }
+            this.players.delete(playerId);
+            this.publish("players", "changed");
+        }
+    }
+
+    onButtonClicked(playerId) {
+        if (this.players.size < 2) return;
+        if (this.timer === -TIMEOUT) return this.onGameStart();
+        if (this.timer > 0 && this.timer <= GAMETIME) this.onPlayerTug(playerId);
+    }
+
+    onGameStart() {
+        this.timer = GAMETIME + COUNTDOWN;
+        this.counter = 0;
+        this.publish("score", "changed");
+        this.publish("timer", "changed");
+        this.future(1000).tick();
+    }
+
+    onPlayerTug(playerId) {
+        if (this.getPlayerPos(playerId) === 1) {
+            this.counter++;
+            if (this.counter === 0) this.counter = 1;
+            this.publish("score", "changed", playerId);
+        } else if (this.getPlayerPos(playerId) === 2) {
+            this.counter--;
+            if (this.counter === 0) this.counter = -1;
+            this.publish("score", "changed", playerId);
+        }
+    }
+
+    tick() {
+        this.timer--;
+        this.publish("timer", "changed");
+        if (this.timer > -TIMEOUT) this.future(1000).tick(); // wait 5 sec before new game
+        if (this.timer === 0) this.publish("score", "changed");
+    }
+
+    getPlayerPos(playerId) {
+        const index = [...this.players.keys()].indexOf(playerId) + 1;
+        return index <= 2 ? index : 0;
+    }
+}
+TugGame.register("TugGame");
+
+
+/////////// Code below is executed outside of synced VM ///////////
+
+const PlayerIdKey = window.location.pathname + "#PlayerId";
+let PlayerId = localStorage.getItem(PlayerIdKey);
+if (!PlayerId) {
+    const random = crypto.getRandomValues(new BigUint64Array(2));
+    PlayerId = random.reduce((a, b) => a + b.toString(36), "");
+    localStorage.setItem(PlayerIdKey, PlayerId);
+}
+
+function s(c, w) { return `${c} ${c === 1 ? w.slice(0, -1) : w}`; }
+
+class TugUI extends Croquet.View {
+    constructor(model) {
+        super(model);
+        this.model = model;
+
+        button.onclick = () => this.publish("button", "click", PlayerId);
+
+        this.subscribe("players", "changed", this.showPlayers);
+        this.subscribe("score"  , "changed", this.showScore);
+        this.subscribe("timer"  , "changed", this.showTimer);
+
+        this.showPlayers();
+        this.showScore();
+        this.showTimer();
+    }
+
+    updateButton() {
+        if (this.model.getPlayerPos(PlayerId) === 0) {
+            button.textContent = "Spectating";
+            button.disabled = true;
+        } else if (this.model.players.size < 2) {
+            button.textContent = "Waiting for other player";
+            button.disabled = true;
+        } else if (this.model.timer === -TIMEOUT) {
+            button.textContent = "Start";
+            button.disabled = false;
+        } else if (this.model.timer <= 0) {
+            button.textContent = `GG! (${TIMEOUT + this.model.timer})`;
+            button.disabled = true;
+        } else if (this.model.timer > GAMETIME) {
+            button.textContent = `Ready (${this.model.timer - GAMETIME})`;
+            button.disabled = true;
+        } else {
+            button.textContent = "Tug";
+            button.disabled = false;
+        }
+    }
+
+    showPlayers() {
+        const total = this.model.players.size;
+        const playing = Math.min(total, 2);
+        const spectating = Math.max(total - 2, 0);
+        const myPos = this.model.getPlayerPos(PlayerId);
+        players.textContent = `You are ${myPos ? `Player #${myPos}` : "Spectating"}. There are ${s(playing, "players")} and ${s(spectating, "spectators")}.`;
+        this.updateButton();
+    }
+
+    showScore(playerId) {
+        if (this.model.timer === -TIMEOUT || this.model.timer > GAMETIME) {
+            score.textContent = "";
+            return;
+        }
+        const inGame = this.model.timer > 0;
+        const myPos = this.model.getPlayerPos(PlayerId);
+        const leadingPos = this.model.counter > 0 ? 1 : 2;
+        if (myPos === leadingPos) {
+            score.textContent = `${inGame ? "Ahead" : "You won"} by ${Math.abs(this.model.counter)}`;
+        } else if (myPos) {
+            score.textContent = `${inGame ? "Behind" : "You lost"} by ${Math.abs(this.model.counter)}`;
+        } else {
+            score.textContent = `Player #${leadingPos} ${inGame ? "leads" : "won"} by ${Math.abs(this.model.counter)}`;
+        }
+        // if this event was triggered by a player tug, show the tug animation
+        if (playerId) this.animateTug(playerId);
+    }
+
+    showTimer() {
+        let time = this.model.timer;
+        if (time <= 0 && this.model.counter) {
+            timer.textContent = "Game Over";
+        } if (time === -TIMEOUT) {
+            timer.textContent = "-:--";
+            showScore();
+        } else {
+            time = Math.max(0, Math.min(GAMETIME, time));
+            const minutes = time / 60 | 0;
+            const seconds = time % 60;
+            timer.textContent = `${minutes}:${seconds.toString().padStart(2, "0")}`;
+        }
+        this.updateButton();
+    }
+
+    animateTug(playerId) {
+        const playerPos = this.model.getPlayerPos(playerId);
+        if (!playerPos) return;
+        const isSpectator = !this.model.getPlayerPos(PlayerId);
+
+        const bubble = document.createElement("div");
+        bubble.className = "bubble";
+        bubble.textContent = playerPos === 1 ? "#1" : "#2";
+
+        bubble.style.top = playerId === PlayerId ? button.offsetTop + 'px' : 0;
+        bubble.style.left = "50%";
+        bubble.style.opacity = 1;
+
+        if (isSpectator) bubble.style.left = playerPos === 1 ? '25%' : '75%';
+
+        document.body.appendChild(bubble);
+        setTimeout(() => {
+            bubble.style.top = "50%";
+            bubble.style.left = "50%";
+            bubble.style.opacity = 0;
+        }, 0);
+        setTimeout(() => bubble.remove(), 1000);
+    }
+}
+
+document.body.ontouchstart = e => e.preventDefault(); // prevent zoom on double tap
+
+Croquet.App.makeWidgetDock(); // shows QR code
+
+Croquet.Session.join({
+    apiKey: '2d0fPrsWoWQFrelRWB1TftMoNJLfOk4Ni6XkQvswX3', // get your own from multisynq.io
+    appId: 'io.multisynq.multitug',
+    name: Croquet.App.autoSession(),
+    password: Croquet.App.autoPassword(),
+    model: TugGame,
+    view: TugUI,
+    viewData: { playerId: PlayerId },
+    tps: 5,
+});
+        </script>
+    </body>
+</html>
