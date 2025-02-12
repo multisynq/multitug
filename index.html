@@ -233,19 +233,27 @@ class TugUI extends Croquet.View {
     }
 
     showScore(playerId) {
+        const counter = this.model.counter;
+
+        // Show the score as graphic like −−−−−+−−−−− based on the counter value
+        function graphic(c = counter) {
+            const n = Math.max(0,Math.min(10, c / 2 + 5|0));
+            return `${'−'.repeat(10-n)}+${'−'.repeat(n)}`;
+        }
+
         if (this.model.timer === -TIMEOUT || this.model.timer > GAMETIME) {
-            score.textContent = "";
+            score.innerHTML = `<br>${graphic(0)}`;
             return;
         }
         const inGame = this.model.timer > 0;
         const myPos = this.model.getPlayerPos(PlayerId);
-        const leadingPos = this.model.counter > 0 ? 1 : 2;
+        const leadingPos = counter > 0 ? 1 : 2;
         if (myPos === leadingPos) {
-            score.textContent = `${inGame ? "Ahead" : "You won"} by ${Math.abs(this.model.counter)}`;
+            score.innerHTML = `${inGame ? "Ahead" : "You won"} by ${Math.abs(counter)}<br>${graphic()}`;
         } else if (myPos) {
-            score.textContent = `${inGame ? "Behind" : "You lost"} by ${Math.abs(this.model.counter)}`;
+            score.innerHTML = `${inGame ? "Behind" : "You lost"} by ${Math.abs(counter)}<br>${graphic()}`;
         } else {
-            score.textContent = `Player #${leadingPos} ${inGame ? "leads" : "won"} by ${Math.abs(this.model.counter)}`;
+            score.innerHTML = `Player #${leadingPos} ${inGame ? "leads" : "won"} by ${Math.abs(counter)}<br>${graphic()}`;
         }
         // if this event was triggered by a player tug, show the tug animation
         if (playerId) this.animateTug(playerId);
