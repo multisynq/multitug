@@ -7,8 +7,8 @@
         <style>
             html, body {
                 height: 100%;
+                margin: 0;
                 overflow: hidden;
-                touch-action: none;
                 -webkit-touch-callout: none;
                 -webkit-user-select: none;
                 user-select: none;
@@ -44,6 +44,9 @@
                 border: none;
                 border-radius: 1em;
                 font-family: monospace;
+            }
+            #button.spectating {
+                background: #AAA;
             }
             .bubble {
                 position: fixed;
@@ -203,19 +206,25 @@ class TugUI extends Croquet.View {
     }
 
     updateButton() {
+        let enable = false;
+        let spectating = false;
         if (this.model.getPlayerPos(PlayerId) === 0) {
             button.textContent = "Spectating";
+            spectating = true;
         } else if (this.model.players.size < 2) {
             button.textContent = "Waiting for other player";
         } else if (this.model.timer === -TIMEOUT) {
-            button.textContent = "Start";
+            button.textContent = "Start"; enable = true;
         } else if (this.model.timer <= 0) {
             button.textContent = `GG! (${TIMEOUT + this.model.timer})`;
         } else if (this.model.timer > GAMETIME) {
             button.textContent = `Ready (${this.model.timer - GAMETIME})`;
         } else {
-            button.textContent = "Tug";
+            button.textContent = "Tug"; enable = true;
         }
+        button.disabled = !enable;
+        button.classList.toggle("spectating", spectating);
+        button.style.pointerEvents = enable ? "auto" : "none"; // prevent zoom on double tap
     }
 
     showPlayers() {
@@ -223,7 +232,7 @@ class TugUI extends Croquet.View {
         const playing = Math.min(total, 2);
         const spectating = Math.max(total - 2, 0);
         const myPos = this.model.getPlayerPos(PlayerId);
-        players.textContent = `You are ${myPos ? `Player #${myPos}` : "Spectating"}. There are ${s(playing, "players")} and ${s(spectating, "spectators")}.`;
+        players.textContent = `You are ${myPos ? `Player#${myPos}` : "Spectating"}. There are ${s(playing, "players")} and ${s(spectating, "spectators")}.`;
         this.updateButton();
     }
 
@@ -248,7 +257,7 @@ class TugUI extends Croquet.View {
         } else if (myPos) {
             score.innerHTML = `${inGame ? "Behind" : "You lost"} by ${Math.abs(counter)}<br>${graphic()}`;
         } else {
-            score.innerHTML = `Player #${leadingPos} ${inGame ? "leads" : "won"} by ${Math.abs(counter)}<br>${graphic()}`;
+            score.innerHTML = `Player#${leadingPos} ${inGame ? "leads" : "won"} by ${Math.abs(counter)}<br>${graphic()}`;
         }
         // if this event was triggered by a player tug, show the tug animation
         if (playerId) this.animateTug(playerId);
