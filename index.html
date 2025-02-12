@@ -85,7 +85,7 @@
         <h1><div id="icon"></div> MultiTug</h1>
         <div id="players">...</div>
         <div id="score"></div>
-        <div id="timer">-:--</div>
+        <div id="timer">−−:−−</div>
         <button id="button">Waiting</button>
 
         <a id="codelink" href="https://github.com/multisynq/multitug/blob/main/index.html"
@@ -264,13 +264,13 @@ class TugUI extends Croquet.View {
         if (time <= 0 && this.model.counter) {
             timer.textContent = "Game Over";
         } if (time === -TIMEOUT) {
-            timer.textContent = "-:--";
-            showScore();
+            timer.innerHTML = "−−:−−";
+            this.showScore();
         } else {
             time = Math.max(0, Math.min(GAMETIME, time));
             const minutes = time / 60 | 0;
             const seconds = time % 60;
-            timer.textContent = `${minutes}:${seconds.toString().padStart(2, "0")}`;
+            timer.textContent = `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
         }
         this.updateButton();
     }
