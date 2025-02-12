@@ -283,12 +283,12 @@ class TugUI extends Croquet.View {
         bubble.style.left = "50%";
         bubble.style.opacity = 1;
 
-        if (isSpectator) bubble.style.left = playerPos === 1 ? '25%' : '75%';
+        const target = playerPos === 1 ? "20%" : "80%";
 
         document.body.appendChild(bubble);
         setTimeout(() => {
             bubble.style.top = "50%";
-            bubble.style.left = "50%";
+            bubble.style.left = target;
             bubble.style.opacity = 0;
         }, 0);
         setTimeout(() => bubble.remove(), 1000);
