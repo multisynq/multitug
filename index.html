@@ -83,7 +83,7 @@
                 #codelink { background: #FFF; color: #00F; }
             }
         </style>
-        <script src="https://cdn.jsdelivr.net/npm/@croquet/croquet@2.0.0-42"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@multisynq/client@1.1.0/bundled/multisynq-client.min.js"></script>
     </head>
     <body>
         <h1><div id="icon"></div> MultiTug</h1>
@@ -103,7 +103,7 @@ const GAMETIME  = 60; // seconds per round
 const COUNTDOWN =  3; // seconds to wait before game starts
 const TIMEOUT   =  5; // seconds to wait after game ends
 
-class TugGame extends Croquet.Model {
+class TugGame extends Multisynq.Model {
     init(_) {
         this.counter = 0;
         this.timer = -TIMEOUT;
@@ -189,7 +189,7 @@ if (!PlayerId) {
 
 function s(c, w) { return `${c} ${c === 1 ? w.slice(0, -1) : w}`; }
 
-class TugUI extends Croquet.View {
+class TugUI extends Multisynq.View {
     constructor(model) {
         super(model);
         this.model = model;
@@ -306,13 +306,13 @@ class TugUI extends Croquet.View {
 
 document.body.ontouchstart = e => e.preventDefault(); // prevent zoom on double tap
 
-Croquet.App.makeWidgetDock(); // shows QR code
+Multisynq.App.makeWidgetDock(); // shows QR code
 
-Croquet.Session.join({
+Multisynq.Session.join({
     apiKey: '2d0fPrsWoWQFrelRWB1TftMoNJLfOk4Ni6XkQvswX3', // get your own from multisynq.io
     appId: 'io.multisynq.multitug',
-    name: Croquet.App.autoSession(),
-    password: Croquet.App.autoPassword(),
+    name: Multisynq.App.autoSession(),
+    password: Multisynq.App.autoPassword(),
     model: TugGame,
     view: TugUI,
     viewData: { playerId: PlayerId },
